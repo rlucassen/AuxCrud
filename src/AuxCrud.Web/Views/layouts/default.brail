@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+<!--<![endif]-->
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>AuxCrud</title>
+
+  <link rel="shortcut icon" href="/Content/images/favicon.ico" />
+
+  <link rel="stylesheet" href="/content/stylesheets/vendor/normalize.css" />
+  <link rel="stylesheet" href="/content/stylesheets/vendor/foundation.min.css" />
+  <link rel="stylesheet" href="/Content/stylesheets/vendor/fontawesome/font-awesome.min.css">
+  <link rel="stylesheet" href="/Content/stylesheets/vendor/jquery.autocomplete.css">
+  <link rel="stylesheet" href="/Content/stylesheets/vendor/datatables.min.css">
+  <link rel="stylesheet" href="/Content/stylesheets/vendor/foundation.datepicker.css">
+  <link rel="stylesheet" href="/Content/stylesheets/app.css">
+
+  <script src="/Content/javascript/vendor/custom.modernizr.js"></script>
+  <script src="/Content/javascript/vendor/jquery.js"> </script>
+  <script src="/Content/javascript/vendor/jquery.autocomplete.js"> </script>
+  <script src="/Content/javascript/vendor/datatables.js"> </script>
+  <script src="/Content/javascript/vendor/foundation.datepicker.js"> </script>
+</head>
+<body>
+  <div class="top-bar">
+    <nav class="top-bar">
+      <ul class="title-area">
+        <li class="name">
+          <h1><a href="/">AuxCrud</a></h1>
+        </li>
+      </ul>
+      <section class="top-bar-section">
+        <ul class="right">
+          <li class="divider"></li>
+          <li><a href="/admin"><i class="fa fa-gear"></i></a></li>
+          <li class="divider"></li>
+          <li><a class="toggle-widescreen" href="#"><i class="fa fa-expand"></i><i class="fa fa-compress"></i></a></li>
+          <li class="divider"></li>
+        </ul>
+      </section>
+    </nav>
+  </div>
+  <div class="row">
+    ${ChildOutput}
+  </div>
+
+  <script src="/Content/javascript/vendor/foundation.min.js"> </script>
+  <script src="/Content/javascript/vendor/foundation/foundation.tooltip.js"> </script>
+  <script>
+      $(document).foundation();
+  </script>
+  <script src="/Content/javascript/app.js"> </script>
+</body>
+</html>

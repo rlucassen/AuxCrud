@@ -1,0 +1,39 @@
+﻿<% if item.Id > 0: %>
+<h1>Bewerk ${viewModelName} <strong>${item.Readable}</strong></h1>
+<% else: %>
+<h1>Nieuw ${crudName}</h1>
+<% end %>
+
+<% if IsDefined("errors"): %>
+<ul class="error-list panel">
+  <% for error in errors: %>
+  <li>${error.Key} - ${error.Value}</li>
+  <% end %>
+</ul>
+<% end %>
+
+<% if IsDefined("cancelLayout"): %>
+<!-- Hier misschien iets met een ajax form??? -->
+<% end %>
+
+<form action="/${controllerName}/${item.Id}/save" method="post" data-abide>
+  <input type="hidden" name="item.Id" value="${item.Id}">
+  <div class="row">
+    <% for input in inputs: %>
+    <% if input.showLabel: %>
+    <div class="large-${input.labelSize} small-${input.labelSmallSize} columns">
+      ${input.label}
+    </div>
+    <% end %>
+    <div class="large-${input.size} small-${input.smallSize} columns">
+      ${input.input}
+    </div>
+    <% end %>
+  </div>
+  <div class="row">
+    <div class="large-12 columns text-right">
+      <a class="button small secondary no-margin" href="/${controllerName}/index">Annuleren</a>
+      <input class="button small success no-margin" type="submit" value="Opslaan">
+    </div>
+  </div>
+</form>

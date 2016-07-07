@@ -1,0 +1,82 @@
+﻿<h1>${viewModelPluralNameCap}</h1>
+
+<% if newEnabled: %>
+<a class="button small" href="/${controllerName}/new">Nieuw ${viewModelName}</a>
+<% end %>
+
+<table class="crud-table" id="${controllerName}" style="width: 100%;">
+</table>
+
+<script>
+  $(function () {
+    $.ajax({
+      url: '/${controllerName}/columns',
+      success: function (columns) {
+        var table = $('#${controllerName}').DataTable({
+          dom: 'lrftip',
+          processing: true,
+          serverSide: true,
+          order: [[1, 'asc']],
+          language: {
+            url: '/content/javascript/vendor/datatables.Dutch.txt',
+          },
+          ajax: {
+            url: '/${controllerName}/list',
+            type: 'POST',
+            data: function (d) {
+              return {
+                draw: d.draw,
+                start: d.start,
+                length: d.length,
+                orderColumn: d.columns[d.order[0].column].name,
+                orderDir: d.order[0].dir,
+                searchValue: d.search.value
+              };
+            }
+          },
+          columns: columns,
+        });
+
+        $('#${controllerName} tbody').on('click', 'td.details-control', function () {
+          var tr = $(this).closest('tr');
+          var row = table.row(tr);
+
+          if (row.child.isShown()) {
+            row.child.hide();
+            tr.removeClass('shown');
+          }
+          else {
+            $.ajax({
+              url: '/${controllerName}/' + row.data().Id + '/${quickviewAction}',
+              data: {
+                cancelLayout: true
+              },
+              success: function (data) {
+                row.child('<div class="quickview">'+data+'</div>').show();
+                tr.addClass('shown');
+                $(document).foundation('reflow');
+              }
+
+            })
+          }
+        }).on('click', 'td.actions a.edit', function (e) {
+          e.preventDefault();
+          var row = table.row($(this).closest('tr'));
+          window.location = '/${controllerName}/' + row.data().Id + '/edit';
+        }).on('click', 'td.actions a.delete', function (e) {
+          e.preventDefault();
+          var row = table.row($(this).closest('tr'));
+          window.location = '/${controllerName}/' + row.data().Id + '/delete';
+        });
+
+      }
+    });
+
+
+
+    //$('#year, #number, #cluster, #program, #manager, #generalProject').change(function () {
+    //  table.ajax.reload();
+    //});
+
+  });
+</script>
