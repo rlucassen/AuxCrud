@@ -3,14 +3,13 @@
     using System;
     using NHibernate;
 
-    [AttributeUsage(AttributeTargets.Property)]
-    public class StringInputAttribute : BaseInputAttribute
+    public class StringInput : BaseInput
     {
-        public StringInputAttribute(int order) : base(order)
+        public StringInput()
         {
         }
 
-        public StringInputAttribute(int order, bool required) : base(order)
+        public StringInput(bool required)
         {
             Required = required;
         }

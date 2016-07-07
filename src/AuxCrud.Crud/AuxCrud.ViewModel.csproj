@@ -34,6 +34,10 @@
       <HintPath>..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NHibernate, Version=3.3.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
       <Private>True</Private>
@@ -48,19 +52,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\ColumnAttribute.cs" />
-    <Compile Include="Attributes\MappingAttribute.cs" />
-    <Compile Include="Attributes\SearchFieldAttribute.cs" />
     <Compile Include="Attributes\ViewModelAttribute.cs" />
+    <Compile Include="Attributes\ViewModelFieldAttribute.cs" />
     <Compile Include="Helpers\IQueryableExtension.cs" />
     <Compile Include="Helpers\LambdaHelper.cs" />
     <Compile Include="Helpers\ReflectionHelper.cs" />
-    <Compile Include="Inputs\BaseInputAttribute.cs" />
-    <Compile Include="Inputs\DateTimeInputAttribute.cs" />
-    <Compile Include="Inputs\SelectInputAttribute.cs" />
-    <Compile Include="Inputs\StringInputAttribute.cs" />
+    <Compile Include="Inputs\BaseInput.cs" />
+    <Compile Include="Inputs\DateTimeInput.cs" />
+    <Compile Include="Inputs\SelectInput.cs" />
+    <Compile Include="Inputs\StringInput.cs" />
     <Compile Include="Interfaces\IListable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModel\GroupViewModel.cs" />
     <Compile Include="ViewModel\PersonViewModel.cs" />
     <Compile Include="ViewModel\ViewModel.cs" />
   </ItemGroup>

@@ -12,6 +12,10 @@
 
     public class ModelBase : IEquatable<ModelBase>
     {
+        public ModelBase()
+        {
+        }
+
         private readonly Guid guid = Guid.NewGuid();
 // ReSharper disable UnassignedField.Local
         private int id;

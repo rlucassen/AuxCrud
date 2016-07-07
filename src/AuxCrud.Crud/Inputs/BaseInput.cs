@@ -3,20 +3,13 @@
     using System;
     using NHibernate;
 
-    [AttributeUsage(AttributeTargets.Property)]
-    public abstract class BaseInputAttribute : Attribute
+    public abstract class BaseInput
     {
-        protected BaseInputAttribute(int order)
-        {
-            Order = order;
-        }
-
-        protected BaseInputAttribute(int order, bool required) : this(order)
+        protected BaseInput(bool required = false)
         {
             Required = required;
         }
 
-        public int Order { get; set; }
         public bool Required { get; set; }
         public string Message { get; set; }
 

@@ -1,7 +1,7 @@
 ﻿<% if item.Id > 0: %>
 <h1>Bewerk ${viewModelName} <strong>${item.Readable}</strong></h1>
 <% else: %>
-<h1>Nieuw ${crudName}</h1>
+<h1>Nieuw ${viewModelPluralName}</h1>
 <% end %>
 
 <% if IsDefined("errors"): %>

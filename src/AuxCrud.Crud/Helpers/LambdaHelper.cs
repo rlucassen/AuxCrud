@@ -93,5 +93,12 @@
             var someValue = Expression.Constant(propertyValue, typeof(string));
             return Expression.Call(propertyAccess, method, someValue);
         }
+
+        public static MemberExpression GetMemberExpression<T>(Expression<Func<T, object>> exp)
+        {
+            var member = exp.Body as MemberExpression;
+            var unary = exp.Body as UnaryExpression;
+            return member ?? (unary != null ? unary.Operand as MemberExpression : null);
+        }
     }
 }

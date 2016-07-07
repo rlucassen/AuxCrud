@@ -3,14 +3,9 @@
     using System;
     using NHibernate;
 
-    [AttributeUsage(AttributeTargets.Property)]
-    public class DateTimeInputAttribute : BaseInputAttribute
+    public class DateTimeInput : BaseInput
     {
-        public DateTimeInputAttribute(int order) : base(order)
-        {
-        }
-
-        public DateTimeInputAttribute(int order, bool required) : base(order, required)
+        public DateTimeInput(bool required = false) : base(required)
         {
         }
 

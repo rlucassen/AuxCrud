@@ -45,7 +45,6 @@
             var propNames = propertyTree.Split('.');
             PropertyInfo propertyInfo = null;
 
-
             object tempObject = obj;
             foreach (var propName in propNames)
             {

@@ -7,15 +7,14 @@
     using NHibernate;
     using NHibernate.Criterion;
 
-    [AttributeUsage(AttributeTargets.Property)]
-    public class SelectInputAttribute : BaseInputAttribute
+    public class SelectInput : BaseInput
     {
-        public SelectInputAttribute(int order, Type objectType) : base(order)
+        public SelectInput(Type objectType) : base(false)
         {
             ObjectType = objectType;
         }
 
-        public SelectInputAttribute(int order, Type objecType, bool required) : base(order, required)
+        public SelectInput(Type objecType, bool required) : base(required)
         {
             ObjectType = objecType;
         }

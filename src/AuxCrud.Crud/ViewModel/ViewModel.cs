@@ -1,100 +1,124 @@
-namespace AuxCrud.ViewModel.ViewModel
+﻿namespace AuxCrud.ViewModel.ViewModel
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Attributes;
+    using System.Linq.Expressions;
+    using System.Reflection;
     using Helpers;
     using Inputs;
-    using Interfaces;
     using Model;
+    using Newtonsoft.Json;
     using NHibernate;
 
-    public abstract class ViewModel<TOwner> : IListable where TOwner : ModelBase, new()
+    public abstract class ViewModel<TOwner, TViewModel> where TOwner : ModelBase, new() where TViewModel : ViewModel<TOwner, TViewModel>
     {
         protected ViewModel()
         {
-            
         }
 
         protected ViewModel(TOwner owner)
         {
-            var fields = GetType().GetProperties().Where(pi => pi.GetCustomAttributes(typeof(MappingAttribute), false).Length > 0);
-            foreach (var field in fields)
-            {
-                var attribute = (MappingAttribute)field.GetCustomAttributes(typeof(MappingAttribute), false).First();
+            Owner = owner;
+            Maps = new List<MapComponent<TOwner, TViewModel>>();
+            Inputs = new List<InputComponent<TOwner, TViewModel>>();
 
-                var propertyValue = owner.GetPropertyValue(attribute.PropertyTree);
-                field.SetValue(this, propertyValue, null);
-            }
+            Map(x => x.Id, y => y.Id);
         }
 
-        [Mapping("Id", "Id")]
         public int Id { get; set; }
+        [JsonIgnore]
+        public TOwner Owner { get; set; }
+        [JsonIgnore]
+        public IList<MapComponent<TOwner, TViewModel>> Maps { get; set; }
+        [JsonIgnore]
+        public IList<InputComponent<TOwner, TViewModel>> Inputs { get; set; }
 
-        public virtual TOwner Update(ISession session)
+        public abstract string Readable { get; }
+
+
+        protected MapComponent<TOwner, TViewModel> Map(Expression<Func<TOwner, object>> ownerExpression, Expression<Func<TViewModel, object>> expression, bool searchable = false)
+        {
+            var mapComponent = new MapComponent<TOwner, TViewModel>(ownerExpression, expression, searchable, this);
+
+            var property = LambdaHelper.GetMemberExpression(expression).Member as PropertyInfo;
+            var ownerProperty = LambdaHelper.GetMemberExpression(ownerExpression).Member as PropertyInfo;
+            if (property != null && ownerProperty != null && Owner != null)
+            {
+                property.SetValue(this, ownerProperty.GetValue(Owner, null), null);
+            }
+            Maps.Add(mapComponent);
+            return mapComponent;
+        }
+
+        public InputComponent<TOwner, TViewModel> Input(Expression<Func<TViewModel, object>> expression, BaseInput input)
+        {
+            var columnComponent = new InputComponent<TOwner, TViewModel>(expression, input, this);
+            Inputs.Add(columnComponent);
+            return columnComponent;
+        }
+
+        public List<Input> GetInputs(ISession session)
+        {
+            var inputs = new List<Input>();
+
+            var index = 1;
+            foreach (var inputComponent in Inputs)
+            {
+                var propInfo = LambdaHelper.GetMemberExpression(inputComponent.Expression).Member as PropertyInfo;
+                var value = propInfo.GetValue(this, null);
+                var inputHtml = inputComponent.Input.Render(propInfo.Name, value, propInfo.Name, session);
+                var input = new Input
+                {
+                    order = index,
+                    label = propInfo.Name,
+                    input = inputHtml,
+                    size = inputComponent.Input.Size,
+                    smallSize = inputComponent.Input.SmallSize,
+                    labelSize = inputComponent.Input.LabelSize,
+                    labelSmallSize = inputComponent.Input.LabelSmallSize,
+                    showLabel = inputComponent.Input.ShowLabel
+                };
+
+                inputs.Add(input);
+                index++;
+            }
+            return inputs.OrderBy(x => x.order).ToList();
+        }
+
+
+        public TOwner Update(ISession session)
         {
             var item = session.Get<TOwner>(Id) ?? new TOwner();
 
-            var fields = GetType().GetProperties().Where(pi => pi.GetCustomAttributes(typeof(MappingAttribute), false).Length > 0);
-            foreach (var field in fields)
+            foreach (var map in Maps)
             {
-                var attribute = (MappingAttribute)field.GetCustomAttributes(typeof(MappingAttribute), false).First();
-                if (attribute.Update)
+                var property = LambdaHelper.GetMemberExpression(map.Expression).Member as PropertyInfo;
+                var ownerProperty = LambdaHelper.GetMemberExpression(map.OwnerExpression).Member as PropertyInfo;
+                if (property != null && ownerProperty != null)
                 {
-                    var propertyValue = field.GetValue(this, null);
-                    ReflectionHelper.SetPropertyValue(item, attribute.PropertyTree, propertyValue);
+                    ownerProperty.SetValue(item, property.GetValue(this, null), null);
                 }
             }
 
             return item;
         }
 
-        public abstract string Readable { get; }
-
-        public List<Input> Inputs(ISession session)
-        {
-            var fields = GetType().GetProperties().Where(pi => pi.GetCustomAttributes(typeof(BaseInputAttribute), false).Length > 0);
-
-            var inputs = new List<Input>();
-
-            foreach (var field in fields)
-            {
-                var attribute = (BaseInputAttribute)field.GetCustomAttributes(typeof(BaseInputAttribute), false).First();
-                var mappingAttribute = (MappingAttribute)field.GetCustomAttributes(typeof(MappingAttribute), false).First();
-                var value = field.GetValue(this, new object[0]);
-                var inputHtml = attribute.Render(field.Name, value, mappingAttribute.Name, session);
-                var input = new Input
-                {
-                    order = attribute.Order,
-                    label = mappingAttribute.Name,
-                    input = inputHtml,
-                    size = attribute.Size,
-                    smallSize = attribute.SmallSize,
-                    labelSize = attribute.LabelSize,
-                    labelSmallSize = attribute.LabelSmallSize,
-                    showLabel = attribute.ShowLabel
-                };
-
-                inputs.Add(input);
-            }
-            return inputs.OrderBy(x => x.order).ToList();
-        }
-
         public Dictionary<string, string> Errors()
         {
-            var fields = GetType().GetProperties().Where(pi => pi.GetCustomAttributes(typeof(BaseInputAttribute), false).Length > 0);
-
             var errors = new Dictionary<string, string>();
 
-            foreach (var field in fields)
+            foreach (var inputComponent in Inputs)
             {
-                var attribute = (BaseInputAttribute)field.GetCustomAttributes(typeof(BaseInputAttribute), false).First();
-                var mappingAttribute = (MappingAttribute)field.GetCustomAttributes(typeof(MappingAttribute), false).First();
-                var value = field.GetValue(this, new object[0]);
+                var property = ((MemberExpression)inputComponent.Expression.Body).Member as PropertyInfo;
+                var value = property?.GetValue(this, null);
 
-                if (!attribute.Isvalid(value)) 
-                    errors.Add(mappingAttribute.Name, attribute.GetMessage(mappingAttribute.Name));
+                if (!inputComponent.Input.Isvalid(value) && property != null)
+                {
+                    errors.Add(property.Name, inputComponent.Input.GetMessage(property.Name));
+                }
             }
+
             return errors;
         }
 
@@ -103,6 +127,37 @@ namespace AuxCrud.ViewModel.ViewModel
             return Errors().Count == 0;
         }
 
+
+    }
+
+    public class MapComponent<TOwner, TViewModel> where TOwner : ModelBase, new() where TViewModel : ViewModel<TOwner, TViewModel>
+    {
+        public MapComponent(Expression<Func<TOwner, object>> ownerExpression, Expression<Func<TViewModel, object>> expression, bool searchable, ViewModel<TOwner, TViewModel> viewModel)
+        {
+            OwnerExpression = ownerExpression;
+            Expression = expression;
+            Searchable = searchable;
+            ViewModel = viewModel;
+        }
+
+        public ViewModel<TOwner, TViewModel> ViewModel { get; set; }
+        public Expression<Func<TOwner, object>> OwnerExpression { get; set; }
+        public Expression<Func<TViewModel, object>> Expression { get; set; }
+        public bool Searchable { get; set; }
+    }
+
+    public class InputComponent<TOwner, TViewModel> where TOwner : ModelBase, new() where TViewModel : ViewModel<TOwner, TViewModel>
+    {
+        public InputComponent(Expression<Func<TViewModel, object>> expression, BaseInput input, ViewModel<TOwner, TViewModel> viewModel)
+        {
+            Input = input;
+            ViewModel = viewModel;
+            Expression = expression;
+        }
+
+        public BaseInput Input { get; set; }
+        public ViewModel<TOwner, TViewModel> ViewModel { get; set; }
+        public Expression<Func<TViewModel, object>> Expression { get; set; }
     }
 
     public class Input
