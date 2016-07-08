@@ -163,8 +163,6 @@
         {
             return Errors().Count == 0;
         }
-
-
     }
 
     public class MapComponent<TOwner, TViewModel> where TOwner : ModelBase, new() where TViewModel : ViewModel<TOwner, TViewModel>

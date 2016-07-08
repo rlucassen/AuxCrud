@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using System.Linq.Expressions;
     using Interfaces;
     using Model;
     using NHibernate;
@@ -13,6 +14,8 @@
         {
         }
 
+        public ICriterion[] Criterions { get; set; }
+
         public override string Render(string property, object value, ISession session)
         {
             var objectDtoType = value.GetType();
@@ -20,7 +23,11 @@
             var id = ((IViewModel) value).Id;
             var selectedObject = (ModelBase)session.Get(objectType, id);
 
-            var list = session.CreateCriteria(objectType).Add(Restrictions.Eq("IsActive", true)).List();
+            var criteria = session.CreateCriteria(objectType).Add(Restrictions.Eq("IsActive", true));
+
+            criteria = Criterions.Aggregate(criteria, (current, criterion) => current.Add(criterion));
+
+            var list = criteria.List();
             var modelBases = list.OfType<ModelBase>();
             var enumerable = modelBases.Select(x => Activator.CreateInstance(objectDtoType, x));
             var objectOptions = enumerable.OfType<IViewModel>();

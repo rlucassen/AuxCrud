@@ -4,6 +4,7 @@
     using Attributes;
     using Inputs;
     using Model.Entities;
+    using NHibernate.Criterion;
 
     [ViewModel("persoon", "personen")]
     public class PersonViewModel : ViewModel<Person, PersonViewModel>
@@ -26,24 +27,8 @@
 
             Reference(x => x.Group, y => y.Group);
 
-            Input(x => x.Firstname, new StringInput("Voornaam", true) { Size = 4 });
-            Input(x => x.Prefix, new StringInput("Tussenvoegsel", false) { Size = 2, ShowLabel = false });
-            Input(x => x.Lastname, new StringInput("Achternaam", true) { Size = 4, ShowLabel = false });
-
-            Input(x => x.Street, new StringInput("Straat", true) { Size = 8 });
-            Input(x => x.Housenumber, new StringInput("Huisnummer", true) { Size = 2, ShowLabel = false });
-            Input(x => x.Postcode, new StringInput("Postcode", true) { Size = 4, Pattern = BaseInput.Patterns.Postcode, Message = "Vul een geldige postcode in" });
-            Input(x => x.City, new StringInput("Stad", true) { Size = 4 });
-
-            Input(x => x.Phone, new StringInput("Telefoonnummer", true) { Pattern = BaseInput.Patterns.Phone, Message = "Vul een geldig telefoonnummer in" });
-            Input(x => x.Email, new StringInput("Emailadres", true) { Pattern = BaseInput.Patterns.Email, Message = "Vul een geldig emailadres in" });
-
-            Input(x => x.Birthdate, new DateTimeInput("Birthdate", true));
-
-            Input(x => x.Group, new SelectInput("Groep", true));
-
             Form()
-                .Row("Naam", 4, 2, 4)
+                .Row("Naam", 4,2,4)
                     .Input(x => x.Firstname, new StringInput("Voornaam", true))
                     .Input(x => x.Prefix, new StringInput("Tussenvoegsel", false))
                     .Input(x => x.Lastname, new StringInput("Achternaam", true))
@@ -56,7 +41,7 @@
                 .Row().Input(x => x.Phone, new StringInput("Telefoonnummer", true) { Pattern = BaseInput.Patterns.Phone, Message = "Vul een geldig telefoonnummer in" })
                 .Row().Input(x => x.Email, new StringInput("Emailadres", true) { Pattern = BaseInput.Patterns.Email, Message = "Vul een geldig emailadres in" })
                 .Row().Input(x => x.Birthdate, new DateTimeInput("Birthdate", true))
-                .Row().Input(x => x.Group, new SelectInput("Groep", true));
+                .Row().Input(x => x.Group, new SelectInput("Groep", true) {Criterions = new ICriterion[] {Restrictions.Like("Name", "Groep", MatchMode.Start)}});
 
 
         }
