@@ -17,6 +17,7 @@
             Map(x => x.Email);
             Map(x => x.Birthdate);
             References(x => x.Group).Cascade.None();
+            HasMany(x => x.Things);
         }
     }
 }

@@ -66,6 +66,7 @@
     <Compile Include="Inputs\StringInput.cs" />
     <Compile Include="Interfaces\IListable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModel\ThingViewModel.cs" />
     <Compile Include="ViewModel\GroupViewModel.cs" />
     <Compile Include="ViewModel\PersonViewModel.cs" />
     <Compile Include="ViewModel\ViewModel.cs" />

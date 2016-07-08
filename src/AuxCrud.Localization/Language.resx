@@ -156,6 +156,9 @@
   <data name="Person_Lastname" xml:space="preserve">
     <value>Achternaam</value>
   </data>
+  <data name="Person_Name" xml:space="preserve">
+    <value>Naam</value>
+  </data>
   <data name="Person_Phone" xml:space="preserve">
     <value>Telefoonnummer</value>
   </data>

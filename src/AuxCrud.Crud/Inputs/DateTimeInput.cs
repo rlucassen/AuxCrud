@@ -5,7 +5,7 @@
 
     public class DateTimeInput : BaseInput
     {
-        public DateTimeInput(string label, bool required = false) : base(label, required)
+        public DateTimeInput(bool required = false) : base(required)
         {
         }
 

@@ -10,7 +10,7 @@
 
     public class SelectInput : BaseInput
     {
-        public SelectInput(string label, bool required = false) : base(label, required)
+        public SelectInput(bool required = false) : base(required)
         {
         }
 

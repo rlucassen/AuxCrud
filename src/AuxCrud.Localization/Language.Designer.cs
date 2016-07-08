@@ -178,6 +178,15 @@ namespace AuxCrud.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Naam.
+        /// </summary>
+        public static string Person_Name {
+            get {
+                return ResourceManager.GetString("Person_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Telefoonnummer.
         /// </summary>
         public static string Person_Phone {

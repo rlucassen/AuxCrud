@@ -4,7 +4,7 @@
 
     public abstract class BaseInput
     {
-        protected BaseInput(string label, bool required = false)
+        protected BaseInput(bool required = false)
         {
             Required = required;
         }

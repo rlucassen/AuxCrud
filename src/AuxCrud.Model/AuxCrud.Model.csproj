@@ -71,7 +71,9 @@
   <ItemGroup>
     <Compile Include="Entities\Group.cs" />
     <Compile Include="Entities\Person.cs" />
+    <Compile Include="Entities\Thing.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
+    <Compile Include="Mapping\ThingMap.cs" />
     <Compile Include="Mapping\ModelBaseMap.cs" />
     <Compile Include="Mapping\GroupMap.cs" />
     <Compile Include="Mapping\PersonMap.cs" />

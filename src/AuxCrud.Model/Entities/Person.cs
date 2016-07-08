@@ -1,6 +1,8 @@
 ﻿namespace AuxCrud.Model.Entities
 {
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
 
     public class Person : ModelBase
     {
@@ -16,5 +18,7 @@
         public virtual DateTime? Birthdate { get; set; }
 
         public virtual Group Group { get; set; }
+
+        public virtual IList<Thing> Things { get; set; }
     }
 }

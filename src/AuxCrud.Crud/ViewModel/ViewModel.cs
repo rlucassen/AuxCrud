@@ -1,6 +1,7 @@
 ﻿namespace AuxCrud.ViewModel.ViewModel
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.Linq;
@@ -13,6 +14,7 @@
     using Model;
     using Newtonsoft.Json;
     using NHibernate;
+    using NHibernate.Mapping;
 
     public abstract class ViewModel<TOwner, TViewModel> : IViewModel where TOwner : ModelBase, new() where TViewModel : ViewModel<TOwner, TViewModel>
     {
@@ -25,6 +27,7 @@
             Owner = owner;
             Maps = new List<MapComponent<TOwner, TViewModel>>();
             References = new List<ReferenceComponent<TOwner, TViewModel>>();
+            HasManys = new List<HasManyComponent<TOwner, TViewModel>>();
             Inputs = new List<InputComponent<TOwner, TViewModel>>();
 
             Map(x => x.Id, y => y.Id);
@@ -37,6 +40,8 @@
         public IList<MapComponent<TOwner, TViewModel>> Maps { get; set; }
         [JsonIgnore]
         public IList<ReferenceComponent<TOwner, TViewModel>> References { get; set; }
+        [JsonIgnore]
+        public IList<HasManyComponent<TOwner, TViewModel>> HasManys { get; set; }
         [JsonIgnore]
         public IList<InputComponent<TOwner, TViewModel>> Inputs { get; set; }
 
@@ -74,6 +79,33 @@
 
             References.Add(referenceComponent);
             return referenceComponent;
+        }
+
+        protected HasManyComponent<TOwner, TViewModel> HasMany(Expression<Func<TOwner, object>> ownerExpression, Expression<Func<TViewModel, object>> expression, bool searchable = false)
+        {
+            var hasManyComponent = new HasManyComponent<TOwner, TViewModel>(ownerExpression, expression, this);
+
+            var property = LambdaHelper.GetMemberExpression(expression).Member as PropertyInfo;
+            var ownerProperty = LambdaHelper.GetMemberExpression(ownerExpression).Member as PropertyInfo;
+            if (ownerProperty != null && ownerProperty.PropertyType.GetGenericTypeDefinition() != typeof (IList<>)) return hasManyComponent;
+
+            if (property != null && ownerProperty != null && Owner != null)
+            {
+                var viewModelType = property.PropertyType.GetGenericArguments()[0];
+
+                //var viewModelType = property.PropertyType;
+                var list = (IList)ownerProperty.GetValue(Owner, null);
+                var genericType = typeof(List<>).MakeGenericType(viewModelType);
+                var viewModelList = (IList)Activator.CreateInstance(genericType);
+                foreach (var item in list)
+                {
+                    var viewModel = Activator.CreateInstance(viewModelType, item);
+                    viewModelList.Add(viewModel);
+                }
+                property.SetValue(this, viewModelList, null);
+            }
+            HasManys.Add(hasManyComponent);
+            return hasManyComponent;
         }
 
         public FormComponent<TOwner, TViewModel> Form()
@@ -184,6 +216,20 @@
     public class ReferenceComponent<TOwner, TViewModel> where TOwner : ModelBase, new() where TViewModel : ViewModel<TOwner, TViewModel>
     {
         public ReferenceComponent(Expression<Func<TOwner, object>> ownerExpression, Expression<Func<TViewModel, object>> expression, ViewModel<TOwner, TViewModel> viewModel)
+        {
+            OwnerExpression = ownerExpression;
+            Expression = expression;
+            ViewModel = viewModel;
+        }
+
+        public ViewModel<TOwner, TViewModel> ViewModel { get; set; }
+        public Expression<Func<TOwner, object>> OwnerExpression { get; set; }
+        public Expression<Func<TViewModel, object>> Expression { get; set; }
+    }
+
+    public class HasManyComponent<TOwner, TViewModel> where TOwner : ModelBase, new() where TViewModel : ViewModel<TOwner, TViewModel>
+    {
+        public HasManyComponent(Expression<Func<TOwner, object>> ownerExpression, Expression<Func<TViewModel, object>> expression, ViewModel<TOwner, TViewModel> viewModel)
         {
             OwnerExpression = ownerExpression;
             Expression = expression;

@@ -1,6 +1,8 @@
 ﻿namespace AuxCrud.ViewModel.ViewModel
 {
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using Attributes;
     using Inputs;
     using Model.Entities;
@@ -27,23 +29,23 @@
 
             Reference(x => x.Group, y => y.Group);
 
+            HasMany(x => x.Things, y => y.Things);
+
             Form()
-                .Row("Naam", 4,2,4)
-                    .Input(x => x.Firstname, new StringInput(Localization.Language.ResourceManager.GetString("Person_Firstname"), true))
-                    .Input(x => x.Prefix, new StringInput("Tussenvoegsel", false))
-                    .Input(x => x.Lastname, new StringInput("Achternaam", true))
-                .Row("Adres", 8)
-                    .Input(x => x.Street, new StringInput("Straat", true))
-                    .Input(x => x.Housenumber, new StringInput("Huisnummer", true))
+                .Row(Localization.Language.Person_Name, 4,2,4)
+                    .Input(x => x.Firstname, new StringInput(true))
+                    .Input(x => x.Prefix, new StringInput(false))
+                    .Input(x => x.Lastname, new StringInput(true))
+                .Row(Localization.Language.Person_Address, 8)
+                    .Input(x => x.Street, new StringInput(true))
+                    .Input(x => x.Housenumber, new StringInput(true))
                 .Row("", 4, 6)
-                    .Input(x => x.Postcode, new StringInput("Postcode", true) { Pattern = BaseInput.Patterns.Postcode, Message = "Vul een geldige postcode in" })
-                    .Input(x => x.City, new StringInput("Stad", true))
-                .Row().Input(x => x.Phone, new StringInput("Telefoonnummer", true) { Pattern = BaseInput.Patterns.Phone, Message = "Vul een geldig telefoonnummer in" })
-                .Row().Input(x => x.Email, new StringInput("Emailadres", true) { Pattern = BaseInput.Patterns.Email, Message = "Vul een geldig emailadres in" })
-                .Row().Input(x => x.Birthdate, new DateTimeInput("Birthdate", true))
-                .Row().Input(x => x.Group, new SelectInput("Groep", true) {Criterions = new ICriterion[] {Restrictions.Like("Name", "Groep", MatchMode.Start)}});
-
-
+                    .Input(x => x.Postcode, new StringInput(true) { Pattern = BaseInput.Patterns.Postcode, Message = "Vul een geldige postcode in" })
+                    .Input(x => x.City, new StringInput(true))
+                .Row().Input(x => x.Phone, new StringInput(true) { Pattern = BaseInput.Patterns.Phone, Message = "Vul een geldig telefoonnummer in" })
+                .Row().Input(x => x.Email, new StringInput(true) { Pattern = BaseInput.Patterns.Email, Message = "Vul een geldig emailadres in" })
+                .Row().Input(x => x.Birthdate, new DateTimeInput(true))
+                .Row().Input(x => x.Group, new SelectInput(true) {Criterions = new ICriterion[] {Restrictions.Like("Name", "Groep", MatchMode.Start)}});
         }
 
         public string Firstname { get; set; }
@@ -63,6 +65,11 @@
         public DateTime? Birthdate { get; set; }
 
         public GroupViewModel Group { get; set; }
+
+        public IList<ThingViewModel> Things { get; set; }
+
+        [TableColumn(7, MappingField = "Things", Title = "ThingsCount")]
+        public int ThingsCount => Things.Count;
 
         [TableColumn(6, MappingField = "Group", Title = "Groep")]
         public string GroupName => Group.Name;

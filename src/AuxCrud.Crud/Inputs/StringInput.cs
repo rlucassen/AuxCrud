@@ -5,7 +5,7 @@
 
     public class StringInput : BaseInput
     {
-        public StringInput(string label, bool required) : base(label, required)
+        public StringInput(bool required) : base(required)
         {
         }
 

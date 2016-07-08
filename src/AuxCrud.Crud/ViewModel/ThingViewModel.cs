@@ -5,9 +5,9 @@
     using Model.Entities;
 
     [ViewModel("groep", "groepen")]
-    public class GroupViewModel : ViewModel<Group, GroupViewModel>
+    public class ThingViewModel : ViewModel<Thing, ThingViewModel>
     {
-        public GroupViewModel(Group owner) : base(owner)
+        public ThingViewModel(Thing owner) : base(owner)
         {
             Map(x => x.Name, y => y.Name, true);
 
