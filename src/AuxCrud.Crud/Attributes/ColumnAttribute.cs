@@ -10,7 +10,6 @@
             Order = order;
         }
 
-        public string Title { get; set; }
         public int Order { get; set; }
         public string MappingField { get; set; }
         public string ClassName { get; set; }

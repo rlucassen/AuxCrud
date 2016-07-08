@@ -8,7 +8,6 @@
     using Model.Entities;
     using NHibernate.Criterion;
 
-    [ViewModel("persoon", "personen")]
     public class PersonViewModel : ViewModel<Person, PersonViewModel>
     {
         public PersonViewModel(Person owner) : base(owner)
@@ -57,9 +56,9 @@
         public string Postcode { get; set; }
         public string City { get; set; }
 
-        [TableColumn(4, MappingField = "Phone", Title = "Telefoonnummer")]
+        [TableColumn(4, MappingField = "Phone")]
         public string Phone { get; set; }
-        [TableColumn(5, MappingField = "Email", Title = "Emailadres")]
+        [TableColumn(5, MappingField = "Email")]
         public string Email { get; set; }
 
         public DateTime? Birthdate { get; set; }
@@ -68,19 +67,19 @@
 
         public IList<ThingViewModel> Things { get; set; }
 
-        [TableColumn(7, MappingField = "Things", Title = "ThingsCount")]
+        [TableColumn(7, MappingField = "Things")]
         public int ThingsCount => Things.Count;
 
-        [TableColumn(6, MappingField = "Group", Title = "Groep")]
+        [TableColumn(6, MappingField = "Group")]
         public string GroupName => Group.Name;
 
-        [TableColumn(1, MappingField = "Firstname", Title = "Naam")]
+        [TableColumn(1, MappingField = "Firstname")]
         public string Fullname => $"{Firstname} {Prefix} {Lastname}".Replace("  ", " ");
 
-        [TableColumn(2, MappingField = "Street", Title = "Adres")]
+        [TableColumn(2, MappingField = "Street")]
         public string Address => $"{Street} {Housenumber}";
 
-        [TableColumn(3, MappingField = "Postcode", Title = "Adres 2")]
+        [TableColumn(3, MappingField = "Postcode")]
         public string Address2 => $"{Postcode} {City}";
 
         public override string Readable => Fullname;

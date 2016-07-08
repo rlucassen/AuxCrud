@@ -106,11 +106,29 @@ namespace AuxCrud.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Persoon.
+        /// </summary>
+        public static string Person {
+            get {
+                return ResourceManager.GetString("Person", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Adres.
         /// </summary>
         public static string Person_Address {
             get {
                 return ResourceManager.GetString("Person_Address", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Postcode/Woonplaats.
+        /// </summary>
+        public static string Person_Address2 {
+            get {
+                return ResourceManager.GetString("Person_Address2", resourceCulture);
             }
         }
         
@@ -151,11 +169,29 @@ namespace AuxCrud.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Naam.
+        /// </summary>
+        public static string Person_Fullname {
+            get {
+                return ResourceManager.GetString("Person_Fullname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Groep.
         /// </summary>
         public static string Person_Group {
             get {
                 return ResourceManager.GetString("Person_Group", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Groepsnaam.
+        /// </summary>
+        public static string Person_GroupName {
+            get {
+                return ResourceManager.GetString("Person_GroupName", resourceCulture);
             }
         }
         
@@ -196,6 +232,15 @@ namespace AuxCrud.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Personen.
+        /// </summary>
+        public static string Person_Plural {
+            get {
+                return ResourceManager.GetString("Person_Plural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Postcode.
         /// </summary>
         public static string Person_Postcode {
@@ -219,6 +264,15 @@ namespace AuxCrud.Localization {
         public static string Person_Street {
             get {
                 return ResourceManager.GetString("Person_Street", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # dingen.
+        /// </summary>
+        public static string Person_ThingsCount {
+            get {
+                return ResourceManager.GetString("Person_ThingsCount", resourceCulture);
             }
         }
         

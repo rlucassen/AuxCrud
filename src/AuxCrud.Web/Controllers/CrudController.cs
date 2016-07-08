@@ -158,10 +158,7 @@
             {
                 var attribute = (TableColumnAttribute)field.GetCustomAttributes(typeof (TableColumnAttribute), false).First();
                 var data = field.Name;
-                //if (field.PropertyType.BaseType != null && field.PropertyType.BaseType.IsGenericType && field.PropertyType.BaseType.GetGenericTypeDefinition() == typeof(ViewModel<TOwner, TViewModel>).GetGenericTypeDefinition())
-                //{
-                //    data = $"{field.Name}.Readable";
-                //}
+                var title = LocalizationHelper.String(field);
                 var column = new TableColumn()
                 {
                     columnOrder = attribute.Order,
@@ -169,7 +166,7 @@
                     name = attribute.MappingField,
                     orderable = attribute.Orderable,
                     className = attribute.ClassName,
-                    title = string.IsNullOrEmpty(attribute.Title) ? field.Name : attribute.Title
+                    title = !string.IsNullOrEmpty(title) ? title : field.Name
                 };
                 columns.Add(column);
             }
@@ -204,11 +201,10 @@
             PropertyBag.Add("newEnabled", NewEnabled);
             PropertyBag.Add("quickviewAction", QuickviewAction);
             PropertyBag.Add("controllerName", GetType().Name.Replace("Controller", ""));
-            var viewModelAttribute = (ViewModelAttribute)typeof (TViewModel).GetCustomAttributes(typeof (ViewModelAttribute), false).FirstOrDefault();
-            var viewModelName = viewModelAttribute?.Name ?? typeof(TViewModel).Name;
+            var viewModelName = LocalizationHelper.String(typeof (TViewModel));
             PropertyBag.Add("viewModelName", viewModelName.ToLower());
             PropertyBag.Add("viewModelNameCap", viewModelName.Capitalize());
-            var viewModelPluralName = viewModelAttribute?.PluralName ?? typeof(TViewModel).Name;
+            var viewModelPluralName = LocalizationHelper.String(typeof(TViewModel), "_Plural");
             PropertyBag.Add("viewModelPluralName", viewModelPluralName.ToLower());
             PropertyBag.Add("viewModelPluralNameCap", viewModelPluralName.Capitalize());
             FillPropertyBag();

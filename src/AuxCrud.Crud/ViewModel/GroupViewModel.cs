@@ -4,7 +4,6 @@
     using Inputs;
     using Model.Entities;
 
-    [ViewModel("groep", "groepen")]
     public class GroupViewModel : ViewModel<Group, GroupViewModel>
     {
         public GroupViewModel(Group owner) : base(owner)
@@ -14,7 +13,7 @@
             Form().Input(x => x.Name, new StringInput(true));
         }
 
-        [TableColumn(4, MappingField = "Name", Title = "Naam")]
+        [TableColumn(4, MappingField = "Name")]
         public string Name { get; set; }
 
         public override string Readable => Name;

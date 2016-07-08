@@ -132,8 +132,14 @@
   <data name="Form_Save" xml:space="preserve">
     <value>Opslaan</value>
   </data>
+  <data name="Person" xml:space="preserve">
+    <value>Persoon</value>
+  </data>
   <data name="Person_Address" xml:space="preserve">
     <value>Adres</value>
+  </data>
+  <data name="Person_Address2" xml:space="preserve">
+    <value>Postcode/Woonplaats</value>
   </data>
   <data name="Person_Birthdate" xml:space="preserve">
     <value>Geboortedatum</value>
@@ -147,8 +153,14 @@
   <data name="Person_Firstname" xml:space="preserve">
     <value>Voornaam</value>
   </data>
+  <data name="Person_Fullname" xml:space="preserve">
+    <value>Naam</value>
+  </data>
   <data name="Person_Group" xml:space="preserve">
     <value>Groep</value>
+  </data>
+  <data name="Person_GroupName" xml:space="preserve">
+    <value>Groepsnaam</value>
   </data>
   <data name="Person_Housenumber" xml:space="preserve">
     <value>Huisnummer</value>
@@ -162,6 +174,9 @@
   <data name="Person_Phone" xml:space="preserve">
     <value>Telefoonnummer</value>
   </data>
+  <data name="Person_Plural" xml:space="preserve">
+    <value>Personen</value>
+  </data>
   <data name="Person_Postcode" xml:space="preserve">
     <value>Postcode</value>
   </data>
@@ -170,6 +185,9 @@
   </data>
   <data name="Person_Street" xml:space="preserve">
     <value>Straat</value>
+  </data>
+  <data name="Person_ThingsCount" xml:space="preserve">
+    <value># dingen</value>
   </data>
   <data name="Select_Choose" xml:space="preserve">
     <value>Kies een optie</value>
