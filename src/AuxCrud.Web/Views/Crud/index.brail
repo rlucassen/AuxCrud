@@ -1,7 +1,7 @@
 ﻿<h1>${viewModelPluralNameCap}</h1>
 
 <% if newEnabled: %>
-<a class="button small" href="/${controllerName}/new">Nieuw ${viewModelName}</a>
+<a class="button small" href="/${controllerName}/new">${t.Form_New} ${viewModelName}</a>
 <% end %>
 
 <table class="crud-table" id="${controllerName}" style="width: 100%;">

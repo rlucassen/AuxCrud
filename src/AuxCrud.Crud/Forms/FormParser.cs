@@ -27,7 +27,7 @@
                 {
                     var propInfo = LambdaHelper.GetMemberExpression(input.Expression).Member as PropertyInfo;
                     var value = propInfo.GetValue(input.ViewModel, null);
-                    sb.AppendLine($"<div class=\"large-{rowSplits[inputCount]} columns\">{input.InputField.Render(propInfo.Name, value, session)}</div>");
+                    sb.AppendLine($"<div class=\"large-{rowSplits[inputCount]} columns\">{input.InputField.Render(propInfo.Name, value, LocalizationHelper.String(propInfo), session)}</div>");
                     inputCount++;
                 }
 

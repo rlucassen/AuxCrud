@@ -179,11 +179,11 @@
                 var actions = "";
                 if (EditEnabled)
                 {
-                    actions += "<a class=\"button tiny success no-margin edit\" href=\"#\">Bewerk</a>";
+                    actions += $"<a class=\"button tiny success no-margin edit\" href=\"#\">{Localization.Language.Form_Edit}</a>";
                 }
                 if (DeleteEnabled)
                 {
-                    actions += "<a class=\"button tiny alert no-margin delete\" href=\"#\">Verwijderen</a>";
+                    actions += $"<a class=\"button tiny alert no-margin delete\" href=\"#\">{Localization.Language.Form_Delete}</a>";
                 }
                 columns.Add(new TableColumn()
                 {

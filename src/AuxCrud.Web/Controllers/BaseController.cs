@@ -12,6 +12,7 @@
     #endregion
 
     [Layout("default")]
+    [Resource("t", "AuxCrud.Localization.Language", AssemblyName = "AuxCrud.Localization")]
     [Filter(ExecuteWhen.BeforeAction, typeof(RequestValidatorFilter), ExecutionOrder = int.MinValue)]
     public abstract class BaseController : SmartDispatcherController
     {

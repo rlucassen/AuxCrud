@@ -11,12 +11,12 @@
 
         public string Pattern { get; set; }
 
-        public override string Render(string property, object value, ISession session)
+        public override string Render(string property, object value, string name, ISession session)
         {
             var patternAttr = !string.IsNullOrEmpty(Pattern) ? $"pattern=\"{Pattern}\"" : "";
             var requiredAttr = Required ? "required" : "";
-            var input = $"<input type=\"text\" id=\"item_{property}\" name=\"item.{property}\" value=\"{value}\" placeholder=\"{Label}\" {patternAttr} {requiredAttr}>";
-            var messageElem = !string.IsNullOrEmpty(Pattern) || Required ? $"<small class=\"error\">{GetMessage(Label)}</small>" : "";
+            var input = $"<input type=\"text\" id=\"item_{property}\" name=\"item.{property}\" value=\"{value}\" placeholder=\"{name}\" {patternAttr} {requiredAttr}>";
+            var messageElem = !string.IsNullOrEmpty(Pattern) || Required ? $"<small class=\"error\">{GetMessage(name)}</small>" : "";
             return $"{input}{messageElem}";
         }
 

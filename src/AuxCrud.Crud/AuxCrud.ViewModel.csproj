@@ -58,6 +58,7 @@
     <Compile Include="Forms\FormParser.cs" />
     <Compile Include="Helpers\IQueryableExtension.cs" />
     <Compile Include="Helpers\LambdaHelper.cs" />
+    <Compile Include="Helpers\LocalizationHelper.cs" />
     <Compile Include="Helpers\ReflectionHelper.cs" />
     <Compile Include="Inputs\BaseInput.cs" />
     <Compile Include="Inputs\DateTimeInput.cs" />
@@ -70,6 +71,10 @@
     <Compile Include="ViewModel\ViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AuxCrud.Localization\AuxCrud.Localization.csproj">
+      <Project>{dd693b58-fbf5-454c-bd24-cbf205e82cc8}</Project>
+      <Name>AuxCrud.Localization</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AuxCrud.Model\AuxCrud.Model.csproj">
       <Project>{10247283-4dab-4008-9e68-fee82305a6fc}</Project>
       <Name>AuxCrud.Model</Name>

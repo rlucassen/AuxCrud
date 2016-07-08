@@ -4,6 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Reflection;
+    using Helpers;
     using Inputs;
     using Model;
     using NHibernate.Util;
@@ -62,7 +64,14 @@
 
         public string GetLabel()
         {
-            return Label ?? Inputs.FirstOrDefault()?.InputField.Label ?? string.Empty;
+            if (Label != null) return Label;
+
+            var firstInput = Inputs.FirstOrDefault();
+            var propInfo = LambdaHelper.GetMemberExpression(firstInput.Expression).Member as PropertyInfo;
+
+            var name = LocalizationHelper.String(propInfo);
+
+            return Label ?? name;
         }
 
         public int[] GetRowSplits()

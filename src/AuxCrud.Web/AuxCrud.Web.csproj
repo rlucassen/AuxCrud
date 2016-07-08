@@ -245,6 +245,10 @@
       <Project>{8d01a48e-b042-4266-9b6f-5d22cf9cdf32}</Project>
       <Name>AuxCrud.ViewModel</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AuxCrud.Localization\AuxCrud.Localization.csproj">
+      <Project>{dd693b58-fbf5-454c-bd24-cbf205e82cc8}</Project>
+      <Name>AuxCrud.Localization</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AuxCrud.Model\AuxCrud.Model.csproj">
       <Project>{10247283-4DAB-4008-9E68-FEE82305A6FC}</Project>
       <Name>AuxCrud.Model</Name>

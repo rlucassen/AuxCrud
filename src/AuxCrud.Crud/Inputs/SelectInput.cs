@@ -16,7 +16,7 @@
 
         public ICriterion[] Criterions { get; set; }
 
-        public override string Render(string property, object value, ISession session)
+        public override string Render(string property, object value, string name, ISession session)
         {
             var objectDtoType = value.GetType();
             var objectType = objectDtoType.BaseType?.GetGenericArguments().First(x => x.BaseType == typeof (ModelBase));
@@ -34,7 +34,7 @@
 
             var input = $"<select name=\"item.{property}\" pattern=\"{Patterns.NoZero}\">";
 
-            input += $"<option value=\"0\" {(selectedObject == null ? "selected" : "")}>Please choose</option>";
+            input += $"<option value=\"0\" {(selectedObject == null ? "selected" : "")}>{Localization.Language.Select_Choose}</option>";
 
             foreach (var objectOption in objectOptions)
             {
@@ -44,7 +44,7 @@
 
             input += "</select>";
 
-            var messageElem = Required ? $"<small class=\"error\">{GetMessage(Label)}</small>" : "";
+            var messageElem = Required ? $"<small class=\"error\">{GetMessage(name)}</small>" : "";
             return $"{input}{messageElem}";
         }
 

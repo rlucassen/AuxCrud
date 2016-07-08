@@ -9,13 +9,13 @@
         {
         }
 
-        public override string Render(string property, object value, ISession session)
+        public override string Render(string property, object value, string name, ISession session)
         {
             var dateTimeValue = Convert.ToDateTime(value);
             var requiredAttr = Required ? "required" : "";
             var stringValue = value != null ? dateTimeValue.ToString("dd-MM-yyyy") : "";
-            var input = $"<input class=\"datepicker\" type=\"text\" id=\"item_{property}\" name=\"item.{property}\" value=\"{stringValue}\" placeholder=\"{Label}\" {requiredAttr}>";
-            var messageElem = Required ? $"<small class=\"error\">{GetMessage(Label)}</small>" : "";
+            var input = $"<input class=\"datepicker\" type=\"text\" id=\"item_{property}\" name=\"item.{property}\" value=\"{stringValue}\" placeholder=\"{name}\" {requiredAttr}>";
+            var messageElem = Required ? $"<small class=\"error\">{GetMessage(name)}</small>" : "";
             return $"{input}{messageElem}";
         }
 

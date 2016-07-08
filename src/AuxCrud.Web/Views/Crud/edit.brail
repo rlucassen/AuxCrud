@@ -1,7 +1,7 @@
 ﻿<% if item.Id > 0: %>
-<h1>Bewerk ${viewModelName} <strong>${item.Readable}</strong></h1>
+<h1>${t.Form_Edit} ${viewModelName} <strong>${item.Readable}</strong></h1>
 <% else: %>
-<h1>Nieuw ${viewModelName}</h1>
+<h1>${t.Form_New} ${viewModelName}</h1>
 <% end %>
 
 <% if IsDefined("errors"): %>
@@ -21,8 +21,8 @@
   ${crudForm}
   <div class="row">
     <div class="large-12 columns text-right">
-      <a class="button small secondary no-margin" href="/${controllerName}/index">Annuleren</a>
-      <input class="button small success no-margin" type="submit" value="Opslaan">
+      <a class="button small secondary no-margin" href="/${controllerName}/index">${t.Form_Cancel}</a>
+      <input class="button small success no-margin" type="submit" value="${t.Form_Save}">
     </div>
   </div>
 </form>
