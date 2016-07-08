@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
+    using Forms;
     using Helpers;
     using Inputs;
     using Interfaces;
@@ -38,6 +39,8 @@
         public IList<ReferenceComponent<TOwner, TViewModel>> References { get; set; }
         [JsonIgnore]
         public IList<InputComponent<TOwner, TViewModel>> Inputs { get; set; }
+
+        public FormComponent<TOwner, TViewModel> FormComponent { get; set; }
 
         public abstract string Readable { get; }
 
@@ -73,39 +76,18 @@
             return referenceComponent;
         }
 
-        public InputComponent<TOwner, TViewModel> Input(Expression<Func<TViewModel, object>> expression, BaseInput input)
+        public FormComponent<TOwner, TViewModel> Form()
         {
-            var columnComponent = new InputComponent<TOwner, TViewModel>(expression, input, this);
-            Inputs.Add(columnComponent);
-            return columnComponent;
+            var formComponent = new FormComponent<TOwner, TViewModel>(this);
+            FormComponent = formComponent;
+            return formComponent;
         }
 
-        public List<Input> GetInputs(ISession session)
+        public InputComponent<TOwner, TViewModel> Input(Expression<Func<TViewModel, object>> expression, BaseInput input)
         {
-            var inputs = new List<Input>();
-
-            var index = 1;
-            foreach (var inputComponent in Inputs)
-            {
-                var propInfo = LambdaHelper.GetMemberExpression(inputComponent.Expression).Member as PropertyInfo;
-                var value = propInfo.GetValue(this, null);
-                var inputHtml = inputComponent.Input.Render(propInfo.Name, value, propInfo.Name, session);
-                var input = new Input
-                {
-                    order = index,
-                    label = propInfo.Name,
-                    input = inputHtml,
-                    size = inputComponent.Input.Size,
-                    smallSize = inputComponent.Input.SmallSize,
-                    labelSize = inputComponent.Input.LabelSize,
-                    labelSmallSize = inputComponent.Input.LabelSmallSize,
-                    showLabel = inputComponent.Input.ShowLabel
-                };
-
-                inputs.Add(input);
-                index++;
-            }
-            return inputs.OrderBy(x => x.order).ToList();
+            var columnComponent = new InputComponent<TOwner, TViewModel>(expression, input, this, null);
+            Inputs.Add(columnComponent);
+            return columnComponent;
         }
 
         public void BindReferences(ISession session, NameValueCollection parameters)
@@ -168,9 +150,9 @@
                 //var property = ((MemberExpression)inputComponent.Expression.Body).Member as PropertyInfo;
                 var value = property?.GetValue(this, null);
 
-                if (!inputComponent.Input.Isvalid(value) && property != null)
+                if (!inputComponent.InputField.Isvalid(value) && property != null)
                 {
-                    errors.Add(property.Name, inputComponent.Input.GetMessage(property.Name));
+                    errors.Add(property.Name, inputComponent.InputField.GetMessage(property.Name));
                 }
             }
 
@@ -212,20 +194,6 @@
 
         public ViewModel<TOwner, TViewModel> ViewModel { get; set; }
         public Expression<Func<TOwner, object>> OwnerExpression { get; set; }
-        public Expression<Func<TViewModel, object>> Expression { get; set; }
-    }
-
-    public class InputComponent<TOwner, TViewModel> where TOwner : ModelBase, new() where TViewModel : ViewModel<TOwner, TViewModel>
-    {
-        public InputComponent(Expression<Func<TViewModel, object>> expression, BaseInput input, ViewModel<TOwner, TViewModel> viewModel)
-        {
-            Input = input;
-            ViewModel = viewModel;
-            Expression = expression;
-        }
-
-        public BaseInput Input { get; set; }
-        public ViewModel<TOwner, TViewModel> ViewModel { get; set; }
         public Expression<Func<TViewModel, object>> Expression { get; set; }
     }
 

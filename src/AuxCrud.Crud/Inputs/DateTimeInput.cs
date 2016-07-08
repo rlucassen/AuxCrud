@@ -5,17 +5,17 @@
 
     public class DateTimeInput : BaseInput
     {
-        public DateTimeInput(bool required = false) : base(required)
+        public DateTimeInput(string label, bool required = false) : base(label, required)
         {
         }
 
-        public override string Render(string property, object value, string name, ISession session)
+        public override string Render(string property, object value, ISession session)
         {
             var dateTimeValue = Convert.ToDateTime(value);
             var requiredAttr = Required ? "required" : "";
             var stringValue = value != null ? dateTimeValue.ToString("dd-MM-yyyy") : "";
-            var input = $"<input class=\"datepicker\" type=\"text\" id=\"item_{property}\" name=\"item.{property}\" value=\"{stringValue}\" {requiredAttr}>";
-            var messageElem = Required ? $"<small class=\"error\">{GetMessage(name)}</small>" : "";
+            var input = $"<input class=\"datepicker\" type=\"text\" id=\"item_{property}\" name=\"item.{property}\" value=\"{stringValue}\" placeholder=\"{Label}\" {requiredAttr}>";
+            var messageElem = Required ? $"<small class=\"error\">{GetMessage(Label)}</small>" : "";
             return $"{input}{messageElem}";
         }
 

@@ -12,6 +12,7 @@
     using NHibernate;
     using NHibernate.Linq;
     using ViewModel.Attributes;
+    using ViewModel.Forms;
     using ViewModel.Helpers;
     using ViewModel.ViewModel;
 
@@ -59,7 +60,7 @@
         {
             FillPropertyBagDefaults();
             PropertyBag.Add("item", dto);
-            PropertyBag.Add("inputs", dto.GetInputs(session));
+            PropertyBag.Add("crudForm", FormParser.Parse(dto.FormComponent, session));
             RenderView("/Crud/edit");
         }
 

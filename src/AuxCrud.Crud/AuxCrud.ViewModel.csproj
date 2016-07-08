@@ -54,6 +54,8 @@
     <Compile Include="Attributes\ColumnAttribute.cs" />
     <Compile Include="Attributes\ViewModelAttribute.cs" />
     <Compile Include="Attributes\ViewModelFieldAttribute.cs" />
+    <Compile Include="Forms\FormComponent.cs" />
+    <Compile Include="Forms\FormParser.cs" />
     <Compile Include="Helpers\IQueryableExtension.cs" />
     <Compile Include="Helpers\LambdaHelper.cs" />
     <Compile Include="Helpers\ReflectionHelper.cs" />

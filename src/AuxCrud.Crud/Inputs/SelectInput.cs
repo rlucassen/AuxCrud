@@ -9,16 +9,11 @@
 
     public class SelectInput : BaseInput
     {
-        public SelectInput() : base(false)
+        public SelectInput(string label, bool required = false) : base(label, required)
         {
         }
 
-        public SelectInput(bool required) : base(required)
-        {
-        }
-
-
-        public override string Render(string property, object value, string name, ISession session)
+        public override string Render(string property, object value, ISession session)
         {
             var objectDtoType = value.GetType();
             var objectType = objectDtoType.BaseType?.GetGenericArguments().First(x => x.BaseType == typeof (ModelBase));
@@ -42,7 +37,7 @@
 
             input += "</select>";
 
-            var messageElem = Required ? $"<small class=\"error\">{GetMessage(name)}</small>" : "";
+            var messageElem = Required ? $"<small class=\"error\">{GetMessage(Label)}</small>" : "";
             return $"{input}{messageElem}";
         }
 
