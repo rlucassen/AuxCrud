@@ -2,16 +2,18 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.Specialized;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
     using Helpers;
     using Inputs;
+    using Interfaces;
     using Model;
     using Newtonsoft.Json;
     using NHibernate;
 
-    public abstract class ViewModel<TOwner, TViewModel> where TOwner : ModelBase, new() where TViewModel : ViewModel<TOwner, TViewModel>
+    public abstract class ViewModel<TOwner, TViewModel> : IViewModel where TOwner : ModelBase, new() where TViewModel : ViewModel<TOwner, TViewModel>
     {
         protected ViewModel()
         {
@@ -21,6 +23,7 @@
         {
             Owner = owner;
             Maps = new List<MapComponent<TOwner, TViewModel>>();
+            References = new List<ReferenceComponent<TOwner, TViewModel>>();
             Inputs = new List<InputComponent<TOwner, TViewModel>>();
 
             Map(x => x.Id, y => y.Id);
@@ -32,10 +35,11 @@
         [JsonIgnore]
         public IList<MapComponent<TOwner, TViewModel>> Maps { get; set; }
         [JsonIgnore]
+        public IList<ReferenceComponent<TOwner, TViewModel>> References { get; set; }
+        [JsonIgnore]
         public IList<InputComponent<TOwner, TViewModel>> Inputs { get; set; }
 
         public abstract string Readable { get; }
-
 
         protected MapComponent<TOwner, TViewModel> Map(Expression<Func<TOwner, object>> ownerExpression, Expression<Func<TViewModel, object>> expression, bool searchable = false)
         {
@@ -49,6 +53,24 @@
             }
             Maps.Add(mapComponent);
             return mapComponent;
+        }
+
+        protected ReferenceComponent<TOwner, TViewModel> Reference(Expression<Func<TOwner, object>> ownerExpression, Expression<Func<TViewModel, object>> expression, bool searchable = false)
+        {
+            var referenceComponent = new ReferenceComponent<TOwner, TViewModel>(ownerExpression, expression, this);
+
+            var property = LambdaHelper.GetMemberExpression(expression).Member as PropertyInfo;
+            var ownerProperty = LambdaHelper.GetMemberExpression(ownerExpression).Member as PropertyInfo;
+            if (property != null && ownerProperty != null && Owner != null)
+            {
+                var viewModelType = property.PropertyType;
+                var model = ownerProperty.GetValue(Owner, null);
+                var viewModel = Activator.CreateInstance(viewModelType, model);
+                property.SetValue(this, viewModel, null);
+            }
+
+            References.Add(referenceComponent);
+            return referenceComponent;
         }
 
         public InputComponent<TOwner, TViewModel> Input(Expression<Func<TViewModel, object>> expression, BaseInput input)
@@ -86,6 +108,25 @@
             return inputs.OrderBy(x => x.order).ToList();
         }
 
+        public void BindReferences(ISession session, NameValueCollection parameters)
+        {
+            foreach (var referenceComponent in this.References)
+            {
+                var propInfo = LambdaHelper.GetMemberExpression(referenceComponent.Expression).Member as PropertyInfo;
+                var ownerPropInfo = LambdaHelper.GetMemberExpression(referenceComponent.OwnerExpression).Member as PropertyInfo;
+                if (propInfo != null && ownerPropInfo != null)
+                {
+                    var paramName = $"item.{propInfo.Name}";
+                    var idValue = Convert.ToInt32(parameters[paramName]);
+                    if (idValue > 0)
+                    {
+                        var modelInstance = session.Get(ownerPropInfo.PropertyType, idValue);
+                        var viewModelInstance = Activator.CreateInstance(propInfo.PropertyType, modelInstance);
+                        propInfo.SetValue(this, viewModelInstance, null);
+                    }
+                }
+            }
+        }
 
         public TOwner Update(ISession session)
         {
@@ -95,9 +136,22 @@
             {
                 var property = LambdaHelper.GetMemberExpression(map.Expression).Member as PropertyInfo;
                 var ownerProperty = LambdaHelper.GetMemberExpression(map.OwnerExpression).Member as PropertyInfo;
+                if (property != null)
+                {
+                    ownerProperty?.SetValue(item, property.GetValue(this, null), null);
+                }
+            }
+
+            foreach (var reference in References)
+            {
+                var property = LambdaHelper.GetMemberExpression(reference.Expression).Member as PropertyInfo;
+                var ownerProperty = LambdaHelper.GetMemberExpression(reference.OwnerExpression).Member as PropertyInfo;
                 if (property != null && ownerProperty != null)
                 {
-                    ownerProperty.SetValue(item, property.GetValue(this, null), null);
+                    var modelType = ownerProperty.PropertyType;
+                    var viewModel = (IViewModel)property.GetValue(this, null);
+                    var model = session.Get(modelType, viewModel.Id);
+                    ownerProperty.SetValue(item, model, null);
                 }
             }
 
@@ -110,7 +164,8 @@
 
             foreach (var inputComponent in Inputs)
             {
-                var property = ((MemberExpression)inputComponent.Expression.Body).Member as PropertyInfo;
+                var property = LambdaHelper.GetMemberExpression(inputComponent.Expression).Member as PropertyInfo;
+                //var property = ((MemberExpression)inputComponent.Expression.Body).Member as PropertyInfo;
                 var value = property?.GetValue(this, null);
 
                 if (!inputComponent.Input.Isvalid(value) && property != null)
@@ -144,6 +199,20 @@
         public Expression<Func<TOwner, object>> OwnerExpression { get; set; }
         public Expression<Func<TViewModel, object>> Expression { get; set; }
         public bool Searchable { get; set; }
+    }
+
+    public class ReferenceComponent<TOwner, TViewModel> where TOwner : ModelBase, new() where TViewModel : ViewModel<TOwner, TViewModel>
+    {
+        public ReferenceComponent(Expression<Func<TOwner, object>> ownerExpression, Expression<Func<TViewModel, object>> expression, ViewModel<TOwner, TViewModel> viewModel)
+        {
+            OwnerExpression = ownerExpression;
+            Expression = expression;
+            ViewModel = viewModel;
+        }
+
+        public ViewModel<TOwner, TViewModel> ViewModel { get; set; }
+        public Expression<Func<TOwner, object>> OwnerExpression { get; set; }
+        public Expression<Func<TViewModel, object>> Expression { get; set; }
     }
 
     public class InputComponent<TOwner, TViewModel> where TOwner : ModelBase, new() where TViewModel : ViewModel<TOwner, TViewModel>

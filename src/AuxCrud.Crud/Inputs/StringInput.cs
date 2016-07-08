@@ -1,6 +1,6 @@
 ﻿namespace AuxCrud.ViewModel.Inputs
 {
-    using System;
+    using System.Text.RegularExpressions;
     using NHibernate;
 
     public class StringInput : BaseInput
@@ -28,14 +28,14 @@
 
         public override bool Isvalid(object value)
         {
-            return !Required || !string.IsNullOrEmpty((string) value);
+            var stringValue = (string) value ?? "";
+            if (!string.IsNullOrEmpty(Pattern))
+            {
+                var regex = new Regex(Pattern);
+                return regex.IsMatch(stringValue);
+            }
+            return !Required || !string.IsNullOrEmpty(stringValue);
         }
 
-        public static class Patterns
-        {
-            public const string Email = @"^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$";
-            public const string Postcode = @"^[0-9]{4}[a-zA-Z]{2}$";
-            public const string Phone = @"^[0-9]{10}$";
-        }
     }
 }

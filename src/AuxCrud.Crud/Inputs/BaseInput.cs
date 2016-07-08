@@ -1,6 +1,5 @@
 ﻿namespace AuxCrud.ViewModel.Inputs
 {
-    using System;
     using NHibernate;
 
     public abstract class BaseInput
@@ -26,5 +25,14 @@
         {
             return string.IsNullOrEmpty(Message) ? $"{name} is verplicht" : Message;
         }
+
+        public static class Patterns
+        {
+            public const string Email = @"^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$";
+            public const string Postcode = @"^[0-9]{4}[a-zA-Z]{2}$";
+            public const string Phone = @"^[0-9]{10}$";
+            public const string NoZero = @"^[1-9]+[0-9]*$";
+        }
+
     }
 }

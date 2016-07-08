@@ -9,31 +9,30 @@
 
     public class SelectInput : BaseInput
     {
-        public SelectInput(Type objectType) : base(false)
+        public SelectInput() : base(false)
         {
-            ObjectType = objectType;
         }
 
-        public SelectInput(Type objecType, bool required) : base(required)
+        public SelectInput(bool required) : base(required)
         {
-            ObjectType = objecType;
         }
 
-        public Type ObjectType { get; set; }
-        public Type ObjectDtoType { get; set; }
 
         public override string Render(string property, object value, string name, ISession session)
         {
-            var selectedObject = (ModelBase)session.Get(ObjectType, value);
+            var objectDtoType = value.GetType();
+            var objectType = objectDtoType.BaseType?.GetGenericArguments().First(x => x.BaseType == typeof (ModelBase));
+            var id = ((IViewModel) value).Id;
+            var selectedObject = (ModelBase)session.Get(objectType, id);
 
-            var list = session.CreateCriteria(ObjectType).Add(Restrictions.Eq("IsActive", true)).List();
+            var list = session.CreateCriteria(objectType).Add(Restrictions.Eq("IsActive", true)).List();
             var modelBases = list.OfType<ModelBase>();
-            var enumerable = modelBases.Select(x => Activator.CreateInstance(ObjectDtoType, x));
-            var objectOptions = enumerable.OfType<IListable>();
+            var enumerable = modelBases.Select(x => Activator.CreateInstance(objectDtoType, x));
+            var objectOptions = enumerable.OfType<IViewModel>();
 
-            var input = $"<select name=\"item.{property}\">";
+            var input = $"<select name=\"item.{property}\" pattern=\"{Patterns.NoZero}\">";
 
-            input += "<option>Please choose";
+            input += $"<option value=\"0\" {(selectedObject == null ? "selected" : "")}>Please choose</option>";
 
             foreach (var objectOption in objectOptions)
             {
@@ -49,8 +48,7 @@
 
         public override bool Isvalid(object value)
         {
-            var intValue = Convert.ToInt32(value);
-            return !Required || intValue > 0;
+            return !Required || ((IViewModel)value).Id > 0;
         }
     }
 }

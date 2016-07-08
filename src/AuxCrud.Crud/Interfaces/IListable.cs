@@ -1,6 +1,6 @@
 ﻿namespace AuxCrud.ViewModel.Interfaces
 {
-    public interface IListable
+    public interface IViewModel
     {
         int Id { get; set; }
         string Readable { get; } 

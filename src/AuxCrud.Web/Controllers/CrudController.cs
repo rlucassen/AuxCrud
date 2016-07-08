@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
+    using System.Reflection;
     using System.Security;
     using Castle.MonoRail.Framework;
     using Model;
@@ -78,7 +80,8 @@
 
             if (!string.IsNullOrEmpty(searchValue))
             {
-                projectData = projectData.WherePropertiesContain(GetSearchProperties(), searchValue);
+                var searchExpressions = ((TViewModel) Activator.CreateInstance(typeof (TViewModel), new TOwner())).Maps.Where(x => x.Searchable).Select(x => x.OwnerExpression).ToArray();
+                projectData = projectData.WherePropertiesContain(searchExpressions, searchValue);
             }
 
             projectData = projectData.Skip(start).Take(length);
@@ -89,14 +92,14 @@
 
         public void Save(int id)
         {
-            var dto = BindObject<TViewModel>("item");
+            var dto = BindViewModel("item");
 
-            //if (!dto.IsValid())
-            //{
-            //    PropertyBag.Add("errors", dto.Errors());
-            //    RenderEdit(dto);
-            //    return;
-            //}
+            if (!dto.IsValid())
+            {
+                PropertyBag.Add("errors", dto.Errors());
+                RenderEdit(dto);
+                return;
+            }
 
             var item = dto.Update(session);
 
@@ -107,6 +110,14 @@
             }
 
             RedirectToAction("index");
+        }
+
+        public TViewModel BindViewModel(string prefix)
+        {
+            var viewModel = (TViewModel)Activator.CreateInstance(typeof(TViewModel), new TOwner());
+            BindObjectInstance(viewModel, prefix);
+            viewModel.BindReferences(session, Params);
+            return viewModel;
         }
 
         public void Delete(int id)
@@ -145,14 +156,19 @@
             foreach (var field in fields)
             {
                 var attribute = (TableColumnAttribute)field.GetCustomAttributes(typeof (TableColumnAttribute), false).First();
+                var data = field.Name;
+                //if (field.PropertyType.BaseType != null && field.PropertyType.BaseType.IsGenericType && field.PropertyType.BaseType.GetGenericTypeDefinition() == typeof(ViewModel<TOwner, TViewModel>).GetGenericTypeDefinition())
+                //{
+                //    data = $"{field.Name}.Readable";
+                //}
                 var column = new TableColumn()
                 {
                     columnOrder = attribute.Order,
-                    data = field.Name,
+                    data = data,
                     name = attribute.MappingField,
                     orderable = attribute.Orderable,
                     className = attribute.ClassName,
-                    title = field.Name
+                    title = string.IsNullOrEmpty(attribute.Title) ? field.Name : attribute.Title
                 };
                 columns.Add(column);
             }
@@ -178,28 +194,6 @@
             }
 
             return columns.OrderBy(x => x.columnOrder).ToList();
-        }
-
-        private static string[] GetSearchProperties()
-        {
-            var item = (TViewModel)Activator.CreateInstance(typeof(TViewModel), new TOwner());
-
-            var mapComponents = item.Maps.Where(x => x.Searchable);
-            var fields = typeof (TViewModel).GetProperties().Where(pi => pi.GetCustomAttributes(typeof (ViewModelFieldAttribute), false).Any() && ((ViewModelFieldAttribute)pi.GetCustomAttributes(typeof(ViewModelFieldAttribute), false).First()).SearchField);
-            var properties = new List<string>();
-
-            foreach (var field in fields)
-            {
-                var attribute = (ViewModelFieldAttribute) field.GetCustomAttributes(typeof (ViewModelFieldAttribute), false).First();
-                var fieldName = attribute.MappingTree;
-                
-                if (!typeof(TOwner).PropertyTreeExists(fieldName))
-                {
-                    throw new Exception($"Field {field.Name} has no field of type string named {fieldName} in the original object");
-                }
-                properties.Add(fieldName);
-            }
-            return properties.ToArray();
         }
 
         protected abstract void FillPropertyBag();

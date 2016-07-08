@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using System.Linq.Expressions;
 
     public static class IQueryableExtensions
     {
@@ -24,7 +25,7 @@
             return (IQueryable<T>)result;
         }
 
-        public static IQueryable<T> WherePropertiesContain<T>(this IQueryable<T> source, string[] propertyNames, string query) where T : class
+        public static IQueryable<T> WherePropertiesContain<T>(this IQueryable<T> source, Expression<Func<T, object>>[] propertyNames, string query) where T : class
         {
             if (source == null) return source;
             if (propertyNames.Length == 0) return source;
