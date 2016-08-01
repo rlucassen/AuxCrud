@@ -74,9 +74,5 @@
 
 
 
-    //$('#year, #number, #cluster, #program, #manager, #generalProject').change(function () {
-    //  table.ajax.reload();
-    //});
-
   });
 </script>

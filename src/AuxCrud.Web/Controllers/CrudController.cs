@@ -201,10 +201,10 @@
             PropertyBag.Add("newEnabled", NewEnabled);
             PropertyBag.Add("quickviewAction", QuickviewAction);
             PropertyBag.Add("controllerName", GetType().Name.Replace("Controller", ""));
-            var viewModelName = LocalizationHelper.String(typeof (TViewModel));
+            var viewModelName = LocalizationHelper.String(typeof (TViewModel)) ?? typeof(TViewModel).Name.Replace("ViewModel", "");
             PropertyBag.Add("viewModelName", viewModelName.ToLower());
             PropertyBag.Add("viewModelNameCap", viewModelName.Capitalize());
-            var viewModelPluralName = LocalizationHelper.String(typeof(TViewModel), "_Plural");
+            var viewModelPluralName = LocalizationHelper.String(typeof(TViewModel), "_Plural") ?? typeof(TViewModel).Name.Replace("ViewModel", "") + "s";
             PropertyBag.Add("viewModelPluralName", viewModelPluralName.ToLower());
             PropertyBag.Add("viewModelPluralNameCap", viewModelPluralName.Capitalize());
             FillPropertyBag();
