@@ -62,7 +62,7 @@
     <Compile Include="Inputs\DateTimeInput.cs" />
     <Compile Include="Inputs\SelectInput.cs" />
     <Compile Include="Inputs\StringInput.cs" />
-    <Compile Include="Interfaces\IListable.cs" />
+    <Compile Include="Interfaces\IViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\ThingViewModel.cs" />
     <Compile Include="ViewModel\GroupViewModel.cs" />
